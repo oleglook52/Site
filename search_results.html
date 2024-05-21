@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/search_results.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="wrapper">
+            <div class="header_wrapper">
+                <div class="header_logo">
+                    <a href="/" class="header_logo_link">
+                        <img src="./img/svg/logo.svg" alt="EasyHome" class="header_logo_pic">
+                    </a>
+                </div>
+                <nav class="header_nav">
+                    <ul class="header_list">
+                        <li class="header_item">
+                            <a href="index_2.html" class="header_link">
+                                <img src="./img/svg/about us button.svg" alt="About us" class="header_aboutus_button">
+                            </a>
+                        </li>
+                        <li class="header_item">
+                            <a href="index_3.html" class="header_link">
+                                <img src="./img/svg/contacts button.svg" alt="Contacts" class="header_contacts_button">
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <section class="searchResults">
+            
+            <div class="rssFeed">
+               
+                <rssapp-wall id="bCer1cjiUc8eJR1j"></rssapp-wall>
+                <script src="https://widget.rss.app/v1/wall.js" type="text/javascript" async></script>
+            </div>
+            <div class="backButton">
+                <a href="/" class="button">Back to Home</a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            var urlParams = new URLSearchParams(window.location.search);
+            var city = urlParams.get('city');
+            var rssUrl = urlParams.get('rss_url');
+
+            if (city && rssUrl) {
+        
+                fetch(rssUrl)
+                    .then(response => response.text())
+                    .then(xmlString => {
+                        var parser = new DOMParser();
+                        var xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+
+                    
+                        var items = xmlDoc.querySelectorAll('item');
+
+                        var rssFeedsHTML = '';
+                        items.forEach(item => {
+                            var title = item.querySelector('title').textContent;
+                            var link = item.querySelector('link').textContent;
+                            var description = item.querySelector('description').textContent;
+                            rssFeedsHTML += '<div class="feedItem">';
+                            rssFeedsHTML += '<h3><a href="' + link + '">' + title + '</a></h3>';
+                            rssFeedsHTML += '<p>' + description + '</p>';
+                            rssFeedsHTML += '</div>';
+                        });
+
+                        var rssFeedsContainer = document.querySelector('.rssFeeds');
+                        rssFeedsContainer.innerHTML = rssFeedsHTML;
+                    })
+                    .catch(error => console.error('Error fetching RSS feed:', error));
+            } else {
+            
+                var searchResultsSection = document.querySelector('.searchResults');
+                searchResultsSection.innerHTML = '<p>Error: Missing parameters.</p>';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
